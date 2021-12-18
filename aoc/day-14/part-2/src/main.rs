@@ -7,10 +7,16 @@ fn pairs_from_string(
 ) -> HashMap<(char, char), u64> {
     let mut new_pairs: HashMap<(char, char), u64> = HashMap::new();
 
-    let mut last_char: char = data[0..1].chars().next().unwrap();
-    tally.insert(last_char, 1);
+    let mut last_char = 'x';
 
-    for c in data.chars().skip(1) {
+    for (i, c) in data.chars().enumerate() {
+        // tally first char and skip
+        if i == 0 {
+            tally.insert(c, 1);
+            last_char = c;
+            continue;
+        }
+
         // tally each char in string
         let value = tally.entry(c).or_insert(0);
         *value += 1;
@@ -53,13 +59,10 @@ fn create_new_pairs(
         let value = new_pairs.entry((middle, right)).or_insert(0);
         *value += count;
     }
-
     new_pairs
 }
 
 fn main() {
-    // let template_string = "NNCB";
-    // let input = include_str!("../test-input.txt");
     let template_string = "SNPVPFCPPKSBNSPSPSOF";
     let input = include_str!("../input.txt");
 
@@ -90,12 +93,12 @@ fn main() {
 
     // calculate max - min
     let (mut min, mut max) = (u64::MAX, u64::MIN);
-    for (_, count) in tally {
-        if count > max {
-            max = count;
+    for (_, count) in &tally {
+        if *count > max {
+            max = *count;
         }
-        if count < min {
-            min = count;
+        if *count < min {
+            min = *count;
         }
     }
 
